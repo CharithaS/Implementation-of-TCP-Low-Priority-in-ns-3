@@ -1,1 +1,1 @@
-# -Implementation-of-TCP-Low-Priority-TCP--LP-in-ns-3
+# Implementation of TCP Low Priority (TCP-LP) in ns-3
