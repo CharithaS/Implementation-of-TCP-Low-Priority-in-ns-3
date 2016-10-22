@@ -153,6 +153,9 @@ public:
 
   // Segment
   uint32_t               m_segmentSize;     //!< Segment size
+  
+  uint32_t               m_rcvtsval;        //!< Timestamp value
+  uint32_t               m_rcvtsecr;        //!< Timestamp echoed in the option
 
   TracedValue<TcpCongState_t> m_congState;    //!< State in the Congestion state machine
 

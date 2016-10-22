@@ -225,6 +225,8 @@ TcpSocketState::TcpSocketState (void)
     m_initialCWnd (0),
     m_initialSsThresh (0),
     m_segmentSize (0),
+    m_rcvtsval (0),
+    m_rcvtsecr (0),
     m_congState (CA_OPEN)
 {
 }
@@ -236,6 +238,8 @@ TcpSocketState::TcpSocketState (const TcpSocketState &other)
     m_initialCWnd (other.m_initialCWnd),
     m_initialSsThresh (other.m_initialSsThresh),
     m_segmentSize (other.m_segmentSize),
+    m_rcvtsval (other.m_rcvtsval),
+    m_rcvtsecr (other.m_rcvtsecr),
     m_congState (other.m_congState)
 {
 }
@@ -1443,6 +1447,14 @@ TcpSocketBase::ReceivedAck (Ptr<Packet> packet, const TcpHeader& tcpHeader)
   NS_LOG_DEBUG ("ACK of " << ackNumber <<
                 " SND.UNA=" << m_txBuffer->HeadSequence () <<
                 " SND.NXT=" << m_nextTxSequence);
+
+  if(m_timestampEnabled)
+  {
+    Ptr<TcpOptionTS> tcbts;
+    tcbts = DynamicCast<TcpOptionTS> (tcpHeader.GetOption (TcpOption::TS));
+    m_tcb->m_rcvtsval = tcbts->GetTimestamp ();
+    m_tcb->m_rcvtsecr = tcbts->GetEcho();
+  }
 
   if (ackNumber == m_txBuffer->HeadSequence ()
       && ackNumber < m_nextTxSequence
