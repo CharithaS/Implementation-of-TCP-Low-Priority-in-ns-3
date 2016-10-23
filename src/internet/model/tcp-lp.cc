@@ -258,7 +258,7 @@ TcpLp::PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked,
    * cut snd_cwnd into half */
   else
     {
-      tcb->m_cWnd = std::max (tcb->m_cWnd.Get () >> 1U, 1U) * tcb->m_segmentSize;
+      tcb->m_cWnd = std::max (tcb->m_cWnd.Get () >> 1U, 1U * tcb->m_segmentSize);
     }
 
   /* record this drop time */
