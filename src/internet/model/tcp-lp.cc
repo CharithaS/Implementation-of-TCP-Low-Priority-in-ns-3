@@ -149,10 +149,9 @@ TcpLp::OWDCalculator (Ptr<TcpSocketState> tcb)
 
 
 void
-TcpLp::RttSample (Ptr<TcpSocketState> tcb, uint32_t rtt)
+TcpLp::RttSample (Ptr<TcpSocketState> tcb)
 {
-  rtt = rtt;
-  int32_t mowd = OWDCalculator (tcb);
+   int32_t mowd = OWDCalculator (tcb);
 
   if (!(m_flag & LP_VALID_RHZ) || !(m_flag & LP_VALID_OWD))
     {
