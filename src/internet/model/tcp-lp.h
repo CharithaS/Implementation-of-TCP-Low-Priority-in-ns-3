@@ -78,7 +78,6 @@ private:
   uint32_t            m_localRefTime;
   uint32_t            m_lastDrop;
   uint32_t            m_inference;
-
 private:
   uint32_t OWDCalculator (Ptr<TcpSocketState> tcb);
   void RttSample (Ptr<TcpSocketState> tcb);
