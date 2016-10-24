@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors: Charitha Sangaraju <charitha29193@gmail.com>
- *          Nandita <>
+ *          Nandita G <gm.nandita@gmail.com>
  *          Mohit P. Tahiliani <tahiliani@nitk.edu.in>
  *
  */
@@ -70,18 +70,18 @@ private:
   };
   uint32_t            m_flag;
   uint32_t            m_sowd;
-  uint32_t            m_owd_min;
-  uint32_t            m_owd_max;
-  uint32_t            m_owd_max_rsv;
-  uint32_t            m_remote_hz;
-  uint32_t            m_remote_ref_time;
-  uint32_t            m_local_ref_time;
-  uint32_t            m_last_drop;
+  uint32_t            m_owdMin;
+  uint32_t            m_owdMax;
+  uint32_t            m_owdMaxRsv;
+  uint32_t            m_remoteHz;
+  uint32_t            m_remoteRefTime;
+  uint32_t            m_localRefTime;
+  uint32_t            m_lastDrop;
   uint32_t            m_inference;
 
 private:
   uint32_t OWDCalculator (Ptr<TcpSocketState> tcb);
-  void RttSample (Ptr<TcpSocketState> tcb, uint32_t rtt);
+  void RttSample (Ptr<TcpSocketState> tcb);
   //uint32_t RemoteHzEstimator(Ptr<TcpSocketState> tcb);
 };
 
