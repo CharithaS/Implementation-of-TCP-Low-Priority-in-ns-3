@@ -79,7 +79,7 @@ private:
   uint32_t            m_lastDrop;
   uint32_t            m_inference;
 private:
-  uint32_t OWDCalculator (Ptr<TcpSocketState> tcb);
+  uint32_t OwdCalculator (Ptr<TcpSocketState> tcb);
   void RttSample (Ptr<TcpSocketState> tcb);
   //uint32_t RemoteHzEstimator(Ptr<TcpSocketState> tcb);
 };
