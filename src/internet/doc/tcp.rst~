@@ -147,30 +147,6 @@ and either connect() and send() (for a TCP client) or bind(), listen(), and
 accept() (for a TCP server). See :ref:`Sockets-APIs` for a review of
 how sockets are used in |ns3|.
 
-TCP-LP
-^^^^^^
-
-TCP-Low priority is a delay based congestion control protocol in which the low priority data utilizes only the excess bandwidth available on an end-to-end path.TCP-LP uses one way delay measurements as an indicator of congestion as it does not influence cross-traffic in the reverse direction.
-
-On acknowledgement:
-
-.. math::
-
-	One way delay = Receiver timestamp - Receiver timestamp echo reply
-	Smoothed one way delay = 7/8 * Old Smoothed one way delay + 1/8 * one way delay
-	If smoothed one way delay > owdMin + 15 * (owdMax - owdMin) / 100
-		if LP_WITHIN_INF
-			cwnd = 1
-		else
-			cwnd = cwnd / 2
-	 	Inference timer is set
-
-where owdMin and owdMax are the minimum and maximum one way delays experienced throughout the connection, LP_WITHIN_INF indicates if TCP-LP is in inference phase or not
-
-More information (paper): http://cs.northwestern.edu/~akuzma/rice/doc/TCP-LP.pdf
-
-
-
 Validation
 ++++++++++
 

@@ -96,10 +96,55 @@ TcpLp::CongestionAvoidance (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
 }
 
 
+
+/*uint32_t
+TcpLp::RemoteHzEstimator(Ptr<TcpSocketState> tcb)
+{
+        int32_t rhz = m_remote_hz << 6;
+        int32_t m = 0;
+
+         not yet record reference time
+          go away!! record it before come back!!
+        if (m_remote_ref_time == 0 || m_local_ref_time == 0)
+                goto out;
+
+         we can't calc remote HZ with no different!!
+        if (tp->rx_opt.rcv_tsval == m_remote_ref_time
+            || tp->rx_opt.rcv_tsecr == m_local_ref_time)
+                goto out;
+
+        m = HZ * (tp->rx_opt.rcv_tsval -
+                  m_remote_ref_time) / (tp->rx_opt.rcv_tsecr -
+                                          m_local_ref_time);
+        if (m < 0)
+                m = -m;
+
+        if (rhz > 0) {
+                m -= rhz >> 6;	 m is now error in remote HZ est
+                rhz += m;	 63/64 old + 1/64 new
+        } else
+                rhz = m << 6;
+
+ out:
+         record time for successful remote HZ calc
+        if ((rhz >> 6) > 0)
+                m_flag |= LP_VALID_RHZ;
+        else
+                m_flag &= ~LP_VALID_RHZ;
+
+         record reference time stamp
+        m_remote_ref_time = tp->rx_opt.rcv_tsval;
+        m_local_ref_time = tp->rx_opt.rcv_tsecr;
+
+        return rhz >> 6;
+}*/
+
+
 uint32_t
 TcpLp::OwdCalculator (Ptr<TcpSocketState> tcb)
 {
-  int32_t owd = 0;  
+  int32_t owd = 0;
+  //m_remote_hz = RemoteHzEstimator(tcb);
   if (m_flag & LP_VALID_RHZ)
     {
       owd =
