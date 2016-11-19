@@ -1,26 +1,4 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
-/*
- * Copyright (c) 2016 NITK Surathkal
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Authors: Charitha Sangaraju <charitha29193@gmail.com>
- *          Nandita G <gm.nandita@gmail.com>
- *          Mohit P. Tahiliani <tahiliani@nitk.edu.in>
- *
- */
- 
 #include "tcp-lp.h"
 #include "ns3/tcp-socket-base.h"
 #include "ns3/log.h"
@@ -48,9 +26,6 @@ TcpLp::TcpLp (void)
     m_owdMin (0xffffffff),
     m_owdMax (0),
     m_owdMaxRsv (0),
-    m_remoteHz (0),
-    m_remoteRefTime (0),
-    m_localRefTime (0),
     m_lastDrop (0),
     m_inference (0)
 {
@@ -64,9 +39,6 @@ TcpLp::TcpLp (const TcpLp& sock)
     m_owdMin (sock.m_owdMin),
     m_owdMax (sock.m_owdMax),
     m_owdMaxRsv (sock.m_owdMaxRsv),
-    m_remoteHz (sock.m_remoteHz),
-    m_remoteRefTime (sock.m_remoteRefTime),
-    m_localRefTime (sock.m_localRefTime),
     m_lastDrop (sock.m_lastDrop),
     m_inference (sock.m_inference)
 {
@@ -95,22 +67,18 @@ TcpLp::CongestionAvoidance (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
     }
 }
 
-
 uint32_t
-TcpLp::OwdCalculator (Ptr<TcpSocketState> tcb)
+TcpLp::OWDCalculator (Ptr<TcpSocketState> tcb)
 {
-  int32_t owd = 0;  
-  if (m_flag & LP_VALID_RHZ)
+  uint32_t owd = 0;
+   owd =
+    tcb->m_rcvtsval -
+    tcb->m_rcvtsecr;
+  if (owd < 0)
     {
-      owd =
-        tcb->m_rcvtsval -
-        tcb->m_rcvtsecr;
-      if (owd < 0)
-        {
-          owd = -owd;
-        }
+      owd = -owd;
     }
-
+  
   if (owd > 0)
     {
       m_flag |= LP_VALID_OWD;
@@ -124,26 +92,25 @@ TcpLp::OwdCalculator (Ptr<TcpSocketState> tcb)
 
 }
 
-
 void
 TcpLp::RttSample (Ptr<TcpSocketState> tcb)
-{  
-  int32_t mowd = OwdCalculator (tcb);
+{
+  uint32_t mowd = OWDCalculator (tcb);
 
-  if (!(m_flag & LP_VALID_RHZ) || !(m_flag & LP_VALID_OWD))
+  if (!(m_flag & LP_VALID_OWD))
     {
       return;
     }
 
   /* record the next min owd */
-  if (mowd < (int32_t)m_owdMin)
+  if (mowd < m_owdMin)
     {
       m_owdMin = mowd;
     }
 
-  if (mowd > (int32_t)m_owdMax)
+  if (mowd > m_owdMax)
     {
-      if (mowd > (int32_t)m_owdMaxRsv)
+      if (mowd > m_owdMaxRsv)
         {
           if (m_owdMaxRsv == 0)
             {
@@ -157,6 +124,7 @@ TcpLp::RttSample (Ptr<TcpSocketState> tcb)
         }
       else
         {
+
           m_owdMax = mowd;
         }
     }
@@ -203,7 +171,7 @@ TcpLp::PktsAcked (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked,
     }
 
   /* test if within threshold */
-  if (m_sowd >> 3 <
+  if (m_sowd >> 3 <=
       m_owdMin + 15 * (m_owdMax - m_owdMin) / 100)
     {
       m_flag |= LP_WITHIN_THR;
