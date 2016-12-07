@@ -11,12 +11,13 @@ TCP-LP is a TCP variant for Low priority data transfer in which the low priority
 ### TCP-LP Example:
 
 An example program for TCP-LP has been provided in 
-```examples/tcp/tcp-variants-comparison.cc
-```
-and should be executed as
-```./waf --run "tcp-variants-comparison.cc --transport_prot=TcpLp"
-```
 
+`examples/tcp/tcp-variants-comparison.cc
+`
+and should be executed as
+
+`./waf --run "tcp-variants-comparison.cc --transport_prot=TcpLp"
+`
 ### References:
 
 [1] Aleksandar Kuzmanovic, Edward W. Knightly.(2003).TCP-LP: A Distributed Algorithm for Low Priority
