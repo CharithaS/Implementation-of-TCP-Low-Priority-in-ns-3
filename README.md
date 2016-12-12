@@ -17,7 +17,7 @@ An example program for TCP-LP has been provided in
 
 and should be executed as
 
-`./waf --run "tcp-variants-comparison.cc --transport_prot=TcpLp"
+`./waf --run "tcp-variants-comparison --transport_prot=TcpLp"
 `
 ### References:
 
