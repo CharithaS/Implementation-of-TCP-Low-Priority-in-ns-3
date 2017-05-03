@@ -15,8 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors: Nandita G 
-            Sangaraju Charitha
+ * Authors: Charitha Sangaraju <charitha29193@gmail.com>
+ *          Nandita G <gm.nandita@gmail.com>
+ *          Mohit P. Tahiliani <tahiliani@nitk.edu.in>
  *
  */
 
@@ -36,11 +37,12 @@ NS_LOG_COMPONENT_DEFINE ("TcpLpTestSuite");
 class TcpLpToNewReno : public TestCase
 {
 public:
-  TcpLpToNewReno (uint32_t cWnd, uint32_t segmentSize, 
+  TcpLpToNewReno (uint32_t cWnd, uint32_t segmentSize,
                   uint32_t segmentsAcked,uint32_t ssThresh, Time rtt, const std::string &name);
 
 private:
   virtual void DoRun (void);
+  void ExecuteTest (void);
   uint32_t m_cWnd;
   uint32_t m_segmentSize;
   uint32_t m_ssThresh;
@@ -63,6 +65,14 @@ TcpLpToNewReno::TcpLpToNewReno (uint32_t cWnd, uint32_t segmentSize,
 void
 TcpLpToNewReno::DoRun ()
 {
+  Simulator::Schedule (Seconds (0.0), &TcpLpToNewReno::ExecuteTest, this);
+  Simulator::Run ();
+  Simulator::Destroy ();
+}
+
+void
+TcpLpToNewReno::ExecuteTest ()
+{
   m_state = CreateObject <TcpSocketState> ();
   m_state->m_cWnd = m_cWnd;
   m_state->m_ssThresh = m_ssThresh;
@@ -73,12 +83,13 @@ TcpLpToNewReno::DoRun ()
   state->m_ssThresh = m_ssThresh;
   state->m_segmentSize = m_segmentSize;
 
-  m_state->m_rcvtsval = 2;
-  m_state->m_rcvtsecr = 1;
-
   Ptr<TcpLp> cong = CreateObject <TcpLp> ();
+
+  m_state->m_rcvTimestampValue = 2;
+  m_state->m_rcvTimestampEchoReply = 1;
+
   cong->PktsAcked (m_state, m_segmentsAcked, m_rtt);
-  cong->CongestionAvoidance (m_state, m_segmentsAcked);
+  cong->IncreaseWindow (m_state, m_segmentsAcked);
 
   Ptr<TcpNewReno> NewRenoCong = CreateObject <TcpNewReno> ();
   NewRenoCong->IncreaseWindow (state, m_segmentsAcked);
@@ -89,14 +100,16 @@ TcpLpToNewReno::DoRun ()
 /**
  * \brief Testing TcpLp when owd exceeds threshold
  */
+
 class TcpLpInferenceTest1 : public TestCase
 {
 public:
-  TcpLpInferenceTest1 (uint32_t cWnd, uint32_t segmentSize, 
+  TcpLpInferenceTest1 (uint32_t cWnd, uint32_t segmentSize,
                        uint32_t segmentsAcked, Time rtt, const std::string &name);
 
 private:
   virtual void DoRun (void);
+  void ExecuteTest (void);
 
   uint32_t m_cWnd;
   uint32_t m_segmentSize;
@@ -118,19 +131,27 @@ TcpLpInferenceTest1::TcpLpInferenceTest1 (uint32_t cWnd, uint32_t segmentSize,
 void
 TcpLpInferenceTest1::DoRun ()
 {
+  Simulator::Schedule (Seconds (0.0), &TcpLpInferenceTest1::ExecuteTest, this);
+  Simulator::Run ();
+  Simulator::Destroy ();
+}
+
+void
+TcpLpInferenceTest1::ExecuteTest ()
+{
   m_state = CreateObject <TcpSocketState> ();
   m_state->m_cWnd = m_cWnd;
   m_state->m_segmentSize = m_segmentSize;
 
   Ptr<TcpLp> cong = CreateObject <TcpLp> ();
 
-  m_state->m_rcvtsval = 2;
-  m_state->m_rcvtsecr = 1;
+  m_state->m_rcvTimestampValue = 2;
+  m_state->m_rcvTimestampEchoReply = 1;
 
   cong->PktsAcked (m_state, m_segmentsAcked, m_rtt);
 
-  m_state->m_rcvtsval = 14;
-  m_state->m_rcvtsecr = 4;
+  m_state->m_rcvTimestampValue = 14;
+  m_state->m_rcvTimestampEchoReply = 4;
   cong->PktsAcked (m_state, m_segmentsAcked, m_rtt);
 
   m_cWnd =  m_cWnd / 2;
@@ -149,6 +170,7 @@ public:
 
 private:
   virtual void DoRun (void);
+  void ExecuteTest (void);
 
   uint32_t m_cWnd;
   uint32_t m_segmentSize;
@@ -169,26 +191,33 @@ TcpLpInferenceTest2::TcpLpInferenceTest2 (uint32_t cWnd, uint32_t segmentSize,ui
 void
 TcpLpInferenceTest2::DoRun ()
 {
+  Simulator::Schedule (Seconds (0.0), &TcpLpInferenceTest2::ExecuteTest, this);
+  Simulator::Run ();
+  Simulator::Destroy ();
+}
+
+void
+TcpLpInferenceTest2::ExecuteTest ()
+{
   m_state = CreateObject <TcpSocketState> ();
   m_state->m_cWnd = m_cWnd;
   m_state->m_segmentSize = m_segmentSize;
 
   Ptr<TcpLp> cong = CreateObject <TcpLp> ();
 
-  m_state->m_rcvtsval = 2;
-  m_state->m_rcvtsecr = 1;
+  m_state->m_rcvTimestampValue = 2;
+  m_state->m_rcvTimestampEchoReply = 1;
   cong->PktsAcked (m_state, m_segmentsAcked, m_rtt);
 
-  m_state->m_rcvtsval = 14;
-  m_state->m_rcvtsecr = 4;
+  m_state->m_rcvTimestampValue = 14;
+  m_state->m_rcvTimestampEchoReply = 4;
   cong->PktsAcked (m_state, m_segmentsAcked, m_rtt);
 
-  m_state->m_rcvtsval = 25;
-  m_state->m_rcvtsecr = 15;
+  m_state->m_rcvTimestampValue = 25;
+  m_state->m_rcvTimestampEchoReply = 15;
   cong->PktsAcked (m_state, m_segmentsAcked, m_rtt);
 
   m_cWnd = 1U * m_segmentSize;
-
 
   NS_TEST_ASSERT_MSG_EQ (m_state->m_cWnd.Get (), m_cWnd,
                          "cWnd has not updated correctly");
